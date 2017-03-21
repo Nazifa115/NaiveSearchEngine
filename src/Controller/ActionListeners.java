@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import Model.Constants;
 import Model.Indexer;
 import View.SearchEngineUI;
-import edu.wright.dase.model.CONSTANTS;
+
 
 public class ActionListeners {
 	public static class BuildIndexButtonListener implements ActionListener {
@@ -34,13 +34,12 @@ public class ActionListeners {
 
 			File indexFilesDirectory = new File(Constants.INDEXFILEDIRECTORY + Constants.DATASET);
 			if (!indexFilesDirectory.exists()) {
-				System.out.println(
-						Constants.INDEXFILEDIRECTORY + Constants.DATASET + " does not exist. Creating Directory...");
+				System.out.println(indexFilesDirectory + " does not exist. Creating Directory...");
 				try {
-					File file = File.createTempFile("Indices", null);
+					File tempFile = new File(indexFilesDirectory + Constants.DATASET);
 					//CONSTANTS.INDEXPATH = file.getParentFile().getCanonicalPath() + "/Indexes";
 
-					System.out.println(file.getParentFile().getCanonicalPath() + " created.");
+					System.out.println(tempFile.getParentFile().getCanonicalPath() + " created.");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -54,8 +53,11 @@ public class ActionListeners {
 		public void actionPerformed(ActionEvent e) {
 			createIndexFolderIfNonExisting();
 
-			if (Constants.INPUTFILESDIRECTORY != null) {
-				new Indexer(Constants.INPUTFILESDIRECTORY, Constants.INDEXFILEDIRECTORY);
+			if (Constants.INPUTFILESDIRECTORY != null && Constants.DATASET!=null) {
+				if (Constants.DATASET.equalsIgnoreCase("Cranfield")) {
+					new Indexer(Constants.INPUTFILESDIRECTORY+Constants.DATASET+"/cran.all", Constants.INDEXFILEDIRECTORY);
+				}
+				
 			}
 		}
 
