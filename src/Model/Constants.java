@@ -6,5 +6,5 @@ public class Constants {
 	public static String DATASET = "Cranfield";
 	public static String INDEXFILEDIRECTORY = ROOTDIR + "Indices/";
 	public static String INPUTFILESDIRECTORY = ROOTDIR;
-	public static String OUTUTFILESDIRECTORY = ROOTDIR + "Output/";
+	public static String OUTPUTFILESDIRECTORY = ROOTDIR + "Output/";
 }

@@ -20,10 +20,9 @@ public class FileContent {
         String Abstract;
         String Branch;
         String Content;
-        //content[0] = title[.T ], content[1] = abstract[.A ], content[2] =  branch[.B ], content[3] = Words [.W ] 
-
+  
         String fullcontent = new String(Files.readAllBytes(Paths.get(file.getCanonicalPath())));
-        System.out.println(file.getCanonicalPath());
+        //System.out.println(file.getCanonicalPath());
         contents = fullcontent.split(".T", 2);
         contents = contents[1].split(".A", 2);
         Title = contents[0];

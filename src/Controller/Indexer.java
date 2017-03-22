@@ -1,4 +1,4 @@
-package Model;
+package Controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +17,9 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+
+import Model.Constants;
+import Model.FileContent;
 
 public class Indexer {
 	private IndexWriter indexwriter;
@@ -89,13 +92,13 @@ public class Indexer {
 	 * @throws IOException
 	 */
 	private Document getDocument(File file) throws FileNotFoundException, IOException {
-		System.out.println(file.getCanonicalPath());
+		/* System.out.println(file.getCanonicalPath());*/		
 		Document doc = new Document();
 		String[] Contents = new String[4];
 		if (Constants.DATASET.contains("Cranfield")) {
 			Contents = FileContent.getCranfieldFileContentSplited(file);
-			System.out.println("0th: " + Contents[0]
-					+ ", 1st: " + Contents[1] + ", 2nd: " + Contents[2] + ", 3rd: " + Contents[2] + ", 4th: " + Contents[3]);
+			/*System.out.println("0th: " + Contents[0]
+					+ ", 1st: " + Contents[1] + ", 2nd: " + Contents[2] + ", 3rd: " + Contents[2] + ", 4th: " + Contents[3]);*/
 		} else {
 			Contents = FileContent.getMedlineFileContentSpilted(file);
 		}
@@ -127,9 +130,6 @@ public class Indexer {
 
 				System.out.println("index Dir: " + _indexFilesDirectory.toString());
 
-				// use the inputFilesDirectory
-				// IndexWriterConfig indexwriterconfig = new
-				// IndexWriterConfig(new StandardAnalyzerCustomed());
 				IndexWriterConfig indexwriterconfig = new IndexWriterConfig(new StandardAnalyzer());/*TODO implement custom analyzer*/
 				indexwriter = new IndexWriter(_indexFilesDirectory, indexwriterconfig);
 			} catch (IOException e) {

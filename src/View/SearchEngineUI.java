@@ -19,7 +19,6 @@ import Controller.ActionListeners.SearchButtonActionListener;
 import Controller.ActionListeners.BuildIndexButtonListener;
 import Model.Constants;
 
-
 import javax.swing.JTextArea;
 import javax.swing.JScrollBar;
 import javax.swing.DefaultComboBoxModel;
@@ -64,32 +63,32 @@ public class SearchEngineUI {
 		frmLuceneSearchEngine.setBounds(100, 100, 450, 300);
 		frmLuceneSearchEngine.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmLuceneSearchEngine.getContentPane().setLayout(null);
-		
-		JButton btnNewButton = new JButton("Search");
-		btnNewButton.setForeground(UIManager.getColor("Focus.color"));
-		btnNewButton.setBounds(303, 60, 105, 30);
-		frmLuceneSearchEngine.getContentPane().add(btnNewButton);
-		btnNewButton.addActionListener(new SearchButtonActionListener());
 
 		searchQuery = new JTextField();
 		searchQuery.setBounds(30, 61, 268, 26);
 		frmLuceneSearchEngine.getContentPane().add(searchQuery);
 		searchQuery.setColumns(10);
-		
+
 		resultTextArea = new JTextArea();
 		resultTextArea.setBounds(30, 103, 380, 148);
 		resultTextArea.setEditable(false);
 		frmLuceneSearchEngine.getContentPane().add(resultTextArea);
 		resultTextArea.setAutoscrolls(true);
-		
+
+		JButton btnNewButton = new JButton("Search");
+		btnNewButton.setForeground(UIManager.getColor("Focus.color"));
+		btnNewButton.setBounds(303, 60, 105, 30);
+		frmLuceneSearchEngine.getContentPane().add(btnNewButton);
+		btnNewButton.addActionListener(new SearchButtonActionListener(searchQuery.getText(), resultTextArea));
+
 		comboBox = new JComboBox<String>();
 		comboBox.setToolTipText("Select any one of the following datasets");
-		comboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Cranfield", "Medline"}));
+		comboBox.setModel(new DefaultComboBoxModel<String>(new String[] { "Cranfield", "Medline" }));
 		comboBox.setMaximumRowCount(2);
 		comboBox.setBounds(30, 22, 268, 27);
 		frmLuceneSearchEngine.getContentPane().add(comboBox);
 		comboBox.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Constants.DATASET = comboBox.getSelectedItem().toString();
@@ -98,13 +97,13 @@ public class SearchEngineUI {
 				System.out.println("from UI: " + Constants.INPUTFILESDIRECTORY);
 			}
 		});
-		
+
 		btnBuildIndex = new JButton("Build Index");
 		btnBuildIndex.addActionListener(new BuildIndexButtonListener());
 		btnBuildIndex.setForeground(UIManager.getColor("Focus.color"));
 		btnBuildIndex.setBounds(303, 21, 105, 30);
 		frmLuceneSearchEngine.getContentPane().add(btnBuildIndex);
-		
+
 	}
 
 }
