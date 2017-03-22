@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 
 public class FileContent {
 
-    public static String[] getCranfieldFileContentSpilted(File file) throws IOException {
+    public static String[] getCranfieldFileContentSplited(File file) throws IOException {
         String[] contents = new String[5];
         String Title;
         String Abstract;
@@ -38,7 +38,7 @@ public class FileContent {
         contents = new String[4];
 
         contents[0] = Title;
-        contents[1] = null;
+        contents[1] = Abstract;
         contents[2] = Branch;
         contents[3] = Content;
 

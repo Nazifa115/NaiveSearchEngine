@@ -41,7 +41,7 @@ public class ActionListeners {
 
 					System.out.println(tempFile.getParentFile().getCanonicalPath() + " created.");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					System.out.println(e);
 					e.printStackTrace();
 				}
 
@@ -55,7 +55,7 @@ public class ActionListeners {
 
 			if (Constants.INPUTFILESDIRECTORY != null && Constants.DATASET!=null) {
 				if (Constants.DATASET.equalsIgnoreCase("Cranfield")) {
-					new Indexer(Constants.INPUTFILESDIRECTORY+Constants.DATASET+"/cran.all", Constants.INDEXFILEDIRECTORY);
+					new Indexer(Constants.INPUTFILESDIRECTORY+Constants.DATASET, Constants.INDEXFILEDIRECTORY);
 				}
 				
 			}
