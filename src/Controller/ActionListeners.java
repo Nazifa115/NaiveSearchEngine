@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import javax.swing.JTextArea;
 
 import Model.Constants;
-import View.SearchEngineUI;
 
 public class ActionListeners {
 	public static class BuildIndexButtonListener implements ActionListener {
@@ -38,36 +37,33 @@ public class ActionListeners {
 				System.out.println(indexFilesDirectory + " does not exist. Creating Directory...");
 				try {
 					File tempFile = new File(indexFilesDirectory + Constants.DATASET);
-					// CONSTANTS.INDEXPATH =
-					// file.getParentFile().getCanonicalPath() + "/Indexes";
-
 					System.out.println(tempFile.getParentFile().getCanonicalPath() + " created.");
 				} catch (IOException e) {
 					System.out.println(e);
 					e.printStackTrace();
 				}
-
 			}
-
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			createIndexFolderIfNonExisting();
 
-			if (Constants.INPUTFILESDIRECTORY != null && Constants.DATASET != null) {
-				if (Constants.DATASET.equalsIgnoreCase("Cranfield")) {
-					new Indexer(Constants.INPUTFILESDIRECTORY + Constants.DATASET, Constants.INDEXFILEDIRECTORY);
+			if (Constants.INPUTFILESDIRECTORY != null) {
+				if (Constants.DATASET == null) {
+					new Indexer(Constants.INPUTFILESDIRECTORY + Constants.Cranfield_DATASET, Constants.INDEXFILEDIRECTORY);
+				}else  if (Constants.DATASET.equalsIgnoreCase("Cranfield")) {
+					new Indexer(Constants.INPUTFILESDIRECTORY, Constants.INDEXFILEDIRECTORY);
 				}
-
 			}
 		}
-
 	}
 
 	public static class SearchButtonActionListener implements ActionListener {
 		String queryText;
 		JTextArea resultArea;
+		BufferedWriter writer = null;
+		
 		public SearchButtonActionListener(String qText, JTextArea rTArea) {
 			this.queryText = qText;
 			this.resultArea = rTArea;
@@ -83,7 +79,22 @@ public class ActionListeners {
 		}
 
 		private void search(String queryText2) {
-			
+			writer = initWriter();
+		}
+
+		private BufferedWriter initWriter() {
+			String path = Constants.OUTPUTFILESDIRECTORY+ Constants.DATASET + "_results.txt";
+			try {
+				if (Files.exists(Paths.get(path))) {
+					writer = new BufferedWriter(new FileWriter(path, true));
+				} else {
+					File f = new File(path);
+					writer = new BufferedWriter(new FileWriter(f.getCanonicalPath(), true));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return writer;
 		}
 	}
 }
