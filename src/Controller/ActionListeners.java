@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import javax.swing.JTextArea;
 
 import Model.Constants;
+import View.SearchEngineUI;
 
 public class ActionListeners {
 	public static class BuildIndexButtonListener implements ActionListener {
@@ -51,8 +52,9 @@ public class ActionListeners {
 
 			if (Constants.INPUTFILESDIRECTORY != null) {
 				if (Constants.DATASET == null) {
-					new Indexer(Constants.INPUTFILESDIRECTORY + Constants.Cranfield_DATASET, Constants.INDEXFILEDIRECTORY);
-				}else  if (Constants.DATASET.equalsIgnoreCase("Cranfield")) {
+					new Indexer(Constants.INPUTFILESDIRECTORY + Constants.Cranfield_DATASET,
+							Constants.INDEXFILEDIRECTORY);
+				} else if (Constants.DATASET.equalsIgnoreCase("Cranfield")) {
 					new Indexer(Constants.INPUTFILESDIRECTORY, Constants.INDEXFILEDIRECTORY);
 				}
 			}
@@ -63,17 +65,36 @@ public class ActionListeners {
 		String queryText;
 		JTextArea resultArea;
 		BufferedWriter writer = null;
-		
-		public SearchButtonActionListener(String qText, JTextArea rTArea) {
-			this.queryText = qText;
+		SearchEngineUI ui;
+
+		public SearchButtonActionListener(SearchEngineUI seui, JTextArea rTArea) {
+			System.out.println("Query text: " + queryText);
+			this.ui = seui;
 			this.resultArea = rTArea;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			resultArea.removeAll();
-			resultArea.setText("Showing result:");
-			if (queryText.length() > 0){
+			this.queryText = ui
+					.getSearchQuery();/*
+										 * The mistake I did here was to set the
+										 * 'queryText variable in the
+										 * constructor of
+										 * SearchButtonActionListener. I thought
+										 * the listener gets instantiated every
+										 * time the 'search' button is clicked.
+										 * Which is a fundamental mistake. The
+										 * listener gets initiated only when the
+										 * SearchEngineUI.initialize() is
+										 * called, which in this case is called
+										 * only once in my main(). Took me a
+										 * while to debug the error why I wasn't
+										 * being able to pass the search query
+										 * on to the listener class.
+										 */
+			resultArea.setText("Showing result for query text: " + queryText);
+			if (queryText.length() > 0) {
 				search(queryText);
 			}
 		}
@@ -83,7 +104,7 @@ public class ActionListeners {
 		}
 
 		private BufferedWriter initWriter() {
-			String path = Constants.OUTPUTFILESDIRECTORY+ Constants.DATASET + "_results.txt";
+			String path = Constants.OUTPUTFILESDIRECTORY + Constants.DATASET + "_results.txt";
 			try {
 				if (Files.exists(Paths.get(path))) {
 					writer = new BufferedWriter(new FileWriter(path, true));
