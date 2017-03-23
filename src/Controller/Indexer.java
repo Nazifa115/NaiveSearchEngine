@@ -19,6 +19,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import Model.Constants;
+import Model.CustomAnalyzer;
 import Model.FileContent;
 
 public class Indexer {
@@ -123,21 +124,18 @@ public class Indexer {
 
 	private IndexWriter getIndexWriter() {
 		if (indexwriter == null) {
-
 			Directory _indexFilesDirectory;
 			try {
 				_indexFilesDirectory = FSDirectory.open(indexFilesDirectory.toPath());
-
 				System.out.println("index Dir: " + _indexFilesDirectory.toString());
-
-				IndexWriterConfig indexwriterconfig = new IndexWriterConfig(new StandardAnalyzer());/*TODO implement custom analyzer*/
+				/*IndexWriterConfig indexwriterconfig = new IndexWriterConfig(new StandardAnalyzer());*/
+				/**implemented custom analyzer**/
+				IndexWriterConfig indexwriterconfig = new IndexWriterConfig(new CustomAnalyzer());
 				indexwriter = new IndexWriter(_indexFilesDirectory, indexwriterconfig);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
-
 		return indexwriter;
 	}
 

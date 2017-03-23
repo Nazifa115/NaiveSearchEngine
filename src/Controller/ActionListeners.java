@@ -32,7 +32,6 @@ public class ActionListeners {
 		String dataset;
 
 		public BuildIndexButtonListener() {
-
 			this.dataset = Constants.DATASET;
 			System.out.println(this.dataset + " is selected");
 		}
@@ -150,7 +149,7 @@ public class ActionListeners {
 					Document doc = getDocumentAttributes(docs[i].doc);
 					if (docs[i].score > 0.1 && docs[i].score!=score) {
 						score = docs[i].score; /*Why does the same doc gets retrieved multiple times?*/
-						System.out.println("doc: " + doc.get("id") + " score: " + docs[i].score);
+						//System.out.println("doc: " + doc.get("id") + " score: " + docs[i].score);
 						writer.write(counter + 1 + "\t" + doc.get("id") + docs[i].score + "\n");
 					}
 				}
@@ -189,8 +188,8 @@ public class ActionListeners {
 		}
 
 		private Query buildQuery(String queryString) {
-			//mfqparser = new MultiFieldQueryParser(new String[] { "title", "abstract", "content" }, new CustomAnalyzer());//TODO
-			mfqparser = new MultiFieldQueryParser(new String[] { "title", "abstract", "content" }, new StandardAnalyzer());
+			mfqparser = new MultiFieldQueryParser(new String[] { "title", "abstract", "content" }, new CustomAnalyzer());
+			/*mfqparser = new MultiFieldQueryParser(new String[] { "title", "abstract", "content" }, new StandardAnalyzer());*/
 			Query query;
 			try {
 				query = mfqparser.parse(queryString);
@@ -204,7 +203,8 @@ public class ActionListeners {
 		}
 
 		private BufferedWriter initWriter() {
-			String path = Constants.OUTPUTFILESDIRECTORY + Constants.DATASET + "_StandardAnalyzer_results.txt";
+			/*String path = Constants.OUTPUTFILESDIRECTORY + Constants.DATASET + "_StandardAnalyzer_results.txt";*/
+			String path = Constants.OUTPUTFILESDIRECTORY + Constants.DATASET + "_CustomAnalyzer_results.txt";
 			try {
 				if (Files.exists(Paths.get(path))) {
 					writer = new BufferedWriter(new FileWriter(path, true));
