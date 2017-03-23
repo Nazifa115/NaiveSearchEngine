@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import javax.swing.JTextArea;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -79,6 +80,7 @@ public class ActionListeners {
 		SearchEngineUI ui;
 		
 		int counter = 0;
+		int totalDcsRetrieved = 0;
 		IndexSearcher searcher = null;
 		MultiFieldQueryParser mfqparser = null;
 
@@ -123,20 +125,52 @@ public class ActionListeners {
 			writer = initWriter();
 			try {
 				writer.write(".Q " + (counter + 1) + "\n " + s + "\n");
+				TopDocs topDocs = performSearch(s);
+				ScoreDoc docs[] = topDocs.scoreDocs;
+				int totalHits = topDocs.totalHits;
+				System.out.println(totalHits + " docs have been retrieved.");
+
 				writer.close();
+				if (docs.length>0) {
+					displayResults(topDocs,docs);
+				}else {
+					System.out.println("No documents contain the given query.");
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			TopDocs topDocs = performSearch(s);
-			ScoreDoc docs[] = topDocs.scoreDocs;
-			int totalHits = topDocs.totalHits;
-			System.out.println(docs.length + " docs have been retrieved.");
-			if (docs.length>0) {
-				
-			}else {
-			
+		}
+
+		private void displayResults(TopDocs topDocs, ScoreDoc[] docs) {
+			try {
+				writer = initWriter();
+				writer.write("Id \t OutputDocs \t Score \n");
+				double score =-1;
+				for (int i = 0; i < docs.length; i++) {
+					Document doc = getDocumentAttributes(docs[i].doc);
+					if (docs[i].score > 0.1 && docs[i].score!=score) {
+						score = docs[i].score; /*Why does the same doc gets retrieved multiple times?*/
+						System.out.println("doc: " + doc.get("id") + " score: " + docs[i].score);
+						writer.write(counter + 1 + "\t" + doc.get("id") + docs[i].score + "\n");
+					}
+				}
+				counter++;
+				writer.write("\t\t" + "\n");
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
+
+		private Document getDocumentAttributes(int docID) {
+			try {
+				return searcher.doc(docID);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
 		}
 
 		private TopDocs performSearch(String queryString) {
@@ -170,7 +204,7 @@ public class ActionListeners {
 		}
 
 		private BufferedWriter initWriter() {
-			String path = Constants.OUTPUTFILESDIRECTORY + Constants.DATASET + "_results.txt";
+			String path = Constants.OUTPUTFILESDIRECTORY + Constants.DATASET + "_StandardAnalyzer_results.txt";
 			try {
 				if (Files.exists(Paths.get(path))) {
 					writer = new BufferedWriter(new FileWriter(path, true));
