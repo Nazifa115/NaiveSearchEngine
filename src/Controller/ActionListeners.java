@@ -11,7 +11,18 @@ import java.nio.file.Paths;
 
 import javax.swing.JTextArea;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
+
 import Model.Constants;
+import Model.CustomAnalyzer;
 import View.SearchEngineUI;
 
 public class ActionListeners {
@@ -66,6 +77,10 @@ public class ActionListeners {
 		JTextArea resultArea;
 		BufferedWriter writer = null;
 		SearchEngineUI ui;
+		
+		int counter = 0;
+		IndexSearcher searcher = null;
+		MultiFieldQueryParser mfqparser = null;
 
 		public SearchButtonActionListener(SearchEngineUI seui, JTextArea rTArea) {
 			System.out.println("Query text: " + queryText);
@@ -76,6 +91,11 @@ public class ActionListeners {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			resultArea.removeAll();
+			try {
+				searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Constants.INDEXFILEDIRECTORY))));
+				System.out.println("Total indexed docs: " + searcher.getIndexReader().numDocs());
+			} catch (IOException e1) {
+			}
 			this.queryText = ui
 					.getSearchQuery();/*
 										 * The mistake I did here was to set the
@@ -99,8 +119,54 @@ public class ActionListeners {
 			}
 		}
 
-		private void search(String queryText2) {
+		private void search(String s) {
 			writer = initWriter();
+			try {
+				writer.write(".Q " + (counter + 1) + "\n " + s + "\n");
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			TopDocs topDocs = performSearch(s);
+			ScoreDoc docs[] = topDocs.scoreDocs;
+			int totalHits = topDocs.totalHits;
+			System.out.println(docs.length + " docs have been retrieved.");
+			if (docs.length>0) {
+				
+			}else {
+			
+			}
+		}
+
+		private TopDocs performSearch(String queryString) {
+			/*Build Query*/
+			Query query = buildQuery(queryString);
+			/*Search Query*/
+			TopDocs topDocs = null;
+			try {
+				topDocs = searcher.search(query, 100000);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return topDocs;
+			
+		}
+
+		private Query buildQuery(String queryString) {
+			//mfqparser = new MultiFieldQueryParser(new String[] { "title", "abstract", "content" }, new CustomAnalyzer());//TODO
+			mfqparser = new MultiFieldQueryParser(new String[] { "title", "abstract", "content" }, new StandardAnalyzer());
+			Query query;
+			try {
+				query = mfqparser.parse(queryString);
+				System.out.println("Query after build: " + query.toString());
+				return query;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
 		}
 
 		private BufferedWriter initWriter() {
